@@ -600,7 +600,7 @@ MonoBehaviour:
   _scoringModifier:
     _positionRotationWeight: 0.5
   _slippiness: 0
-  _supportedGrabTypes: 3
+  _supportedGrabTypes: 1
   _pinchGrabRules:
     _thumbRequirement: 0
     _indexRequirement: 1
@@ -8646,6 +8646,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HitTargetColor
   hitColor: {r: 0.0023497343, g: 0, b: 1, a: 1}
   hitColorDuration: 0.3
+  hitScaleMultiplier: 1.08
+  hitScaleDuration: 0.18
   hitSound: {fileID: 8300000, guid: 7478151cf36724a7dada558f746c3633, type: 3}
   scoreManager: {fileID: 2117043811}
   scoreAmount: 1
@@ -11796,6 +11798,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2117043812}
   - component: {fileID: 2117043811}
+  - component: {fileID: 2117043813}
   m_Layer: 0
   m_Name: ScoreManager
   m_TagString: Untagged
@@ -11816,6 +11819,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
   scoreText: {fileID: 1198023313}
+--- !u!114 &2117043813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2117043810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e5d3c59bb1742d4a8d44551e1f8c9ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ControllerGrabInputOverride
+  grabButtonUsage: 32
 --- !u!4 &2117043812
 Transform:
   m_ObjectHideFlags: 0

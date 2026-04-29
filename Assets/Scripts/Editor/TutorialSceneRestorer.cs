@@ -23,6 +23,24 @@ public static class TutorialSceneRestorer
         Debug.Log("Restored throwable object to stable Cube visuals.");
     }
 
+    [MenuItem("VR Tutorial/Configure Throwable For Trigger Pinch Grab")]
+    public static void ConfigureThrowableForTriggerPinchGrab()
+    {
+        GameObject throwable = GameObject.Find("[BuildingBlock] Cube");
+        if (throwable == null)
+        {
+            Debug.LogError("Could not find [BuildingBlock] Cube in the active scene.");
+            return;
+        }
+
+        ConfigurePinchOnlyGrab(throwable);
+        Selection.activeGameObject = throwable;
+        EditorGUIUtility.PingObject(throwable);
+        EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+        EditorSceneManager.SaveOpenScenes();
+        Debug.Log("Configured throwable object for trigger-style pinch grab.");
+    }
+
     [MenuItem("VR Tutorial/Restore Dart Practice Scene")]
     public static void RestoreDartPracticeScene()
     {
@@ -78,6 +96,7 @@ public static class TutorialSceneRestorer
         RemoveDartVisuals(throwable);
         RemoveIfExists<DartVisualBuilder>(throwable);
         AlignGrabHelpersWithThrowable(throwable);
+        ConfigurePinchOnlyGrab(throwable);
         ResettableObject resettableObject = AddIfMissing<ResettableObject>(throwable);
         SerializedObject serializedResettable = new SerializedObject(resettableObject);
         serializedResettable.FindProperty("waitInStartPosition").boolValue = true;
@@ -96,6 +115,27 @@ public static class TutorialSceneRestorer
         handGrabRoutine.localPosition = Vector3.zero;
         handGrabRoutine.localRotation = Quaternion.identity;
         handGrabRoutine.localScale = Vector3.one;
+    }
+
+    private static void ConfigurePinchOnlyGrab(GameObject throwable)
+    {
+        foreach (MonoBehaviour component in throwable.GetComponentsInChildren<MonoBehaviour>(true))
+        {
+            if (component == null)
+            {
+                continue;
+            }
+
+            SerializedObject serializedComponent = new SerializedObject(component);
+            SerializedProperty supportedGrabTypes = serializedComponent.FindProperty("_supportedGrabTypes");
+            if (supportedGrabTypes == null)
+            {
+                continue;
+            }
+
+            supportedGrabTypes.intValue = 1;
+            serializedComponent.ApplyModifiedProperties();
+        }
     }
 
     private static void RemoveDartVisuals(GameObject throwable)
@@ -119,6 +159,7 @@ public static class TutorialSceneRestorer
         }
 
         ScoreManager scoreManager = AddIfMissing<ScoreManager>(scoreObject);
+        AddIfMissing<ControllerGrabInputOverride>(scoreObject);
         Text scoreText = RestoreScoreCanvas();
 
         SerializedObject serializedScoreManager = new SerializedObject(scoreManager);
@@ -197,6 +238,8 @@ public static class TutorialSceneRestorer
 
         HitTargetColor hitTargetColor = AddIfMissing<HitTargetColor>(target);
         SerializedObject serializedHitTarget = new SerializedObject(hitTargetColor);
+        serializedHitTarget.FindProperty("hitScaleMultiplier").floatValue = 1.08f;
+        serializedHitTarget.FindProperty("hitScaleDuration").floatValue = 0.18f;
         serializedHitTarget.FindProperty("scoreManager").objectReferenceValue = scoreManager;
         serializedHitTarget.FindProperty("scoreAmount").intValue = 1;
         serializedHitTarget.ApplyModifiedProperties();
@@ -207,8 +250,7 @@ public static class TutorialSceneRestorer
     private static void CleanMistakenTeleportTarget()
     {
         HitTargetColor[] hitTargets = Object.FindObjectsByType<HitTargetColor>(
-            FindObjectsInactive.Include,
-            FindObjectsSortMode.None);
+            FindObjectsInactive.Include);
 
         foreach (HitTargetColor hitTarget in hitTargets)
         {
