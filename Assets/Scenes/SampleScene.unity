@@ -9317,6 +9317,8 @@ GameObject:
   - component: {fileID: 1596182264}
   - component: {fileID: 1596182263}
   - component: {fileID: 1596182271}
+  - component: {fileID: 1596182272}
+  - component: {fileID: 1596182273}
   m_Layer: 0
   m_Name: '[BuildingBlock] Cube'
   m_TagString: Throwable
@@ -9393,7 +9395,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 0.45, y: 0.45, z: 1.35}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1596182266
 MeshRenderer:
@@ -9500,6 +9502,50 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ResettableObject
   resetBelowY: 0.08
   waitInStartPosition: 1
+--- !u!114 &1596182272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1596182262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5218382dabcf9dd468e8444fd2656443, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::DartVisualBuilder
+  hideRootRenderer: 1
+  configureBoxCollider: 1
+  bodyLength: 1
+  bodyRadius: 0.055
+  tipLength: 0.28
+  finLength: 0.32
+  finHeight: 0.16
+  grabColliderSize: {x: 0.45, y: 0.45, z: 1.35}
+  bodyColor: {r: 0.18, g: 0.18, b: 0.2, a: 1}
+  tipColor: {r: 0.8, g: 0.78, b: 0.68, a: 1}
+  finColor: {r: 0.9, g: 0.12, b: 0.08, a: 1}
+--- !u!114 &1596182273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1596182262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f0f6f6d5e834d6f9c9056d6a72fd115, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::DartFlightStabilizer
+  minimumSpeed: 0.25
+  angularDampingStrength: 10
+  alignDegreesPerSecond: 1440
+  forceRotationWhileHeld: 0
+  heldAlignDegreesPerSecond: 360
+  alignOnceOnGrab: 1
+  snapRotation: 1
+  throwVelocityMultiplier: 1.35
+  maxThrowSpeed: 8
 --- !u!1 &1597138590
 GameObject:
   m_ObjectHideFlags: 0

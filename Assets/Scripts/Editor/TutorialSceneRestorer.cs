@@ -41,6 +41,25 @@ public static class TutorialSceneRestorer
         Debug.Log("Configured throwable object for trigger-style pinch grab.");
     }
 
+    [MenuItem("VR Tutorial/Configure Throwable Dart Visual")]
+    public static void ConfigureThrowableDartVisual()
+    {
+        GameObject throwable = GameObject.Find("[BuildingBlock] Cube");
+        if (throwable == null)
+        {
+            Debug.LogError("Could not find [BuildingBlock] Cube in the active scene.");
+            return;
+        }
+
+        ConfigureDartVisual(throwable);
+        ConfigureDartFlight(throwable);
+        Selection.activeGameObject = throwable;
+        EditorGUIUtility.PingObject(throwable);
+        EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+        EditorSceneManager.SaveOpenScenes();
+        Debug.Log("Configured throwable object with dart visuals and flight stabilization.");
+    }
+
     [MenuItem("VR Tutorial/Restore Dart Practice Scene")]
     public static void RestoreDartPracticeScene()
     {
@@ -52,6 +71,8 @@ public static class TutorialSceneRestorer
         }
 
         RestoreThrowable(throwable);
+        ConfigureDartVisual(throwable);
+        ConfigureDartFlight(throwable);
 
         ScoreManager scoreManager = RestoreScoreManager();
         CleanMistakenTeleportTarget();
@@ -95,6 +116,7 @@ public static class TutorialSceneRestorer
 
         RemoveDartVisuals(throwable);
         RemoveIfExists<DartVisualBuilder>(throwable);
+        RemoveIfExists<DartFlightStabilizer>(throwable);
         AlignGrabHelpersWithThrowable(throwable);
         ConfigurePinchOnlyGrab(throwable);
         ResettableObject resettableObject = AddIfMissing<ResettableObject>(throwable);
@@ -136,6 +158,38 @@ public static class TutorialSceneRestorer
             supportedGrabTypes.intValue = 1;
             serializedComponent.ApplyModifiedProperties();
         }
+    }
+
+    private static void ConfigureDartVisual(GameObject throwable)
+    {
+        DartVisualBuilder visualBuilder = AddIfMissing<DartVisualBuilder>(throwable);
+        SerializedObject serializedVisualBuilder = new SerializedObject(visualBuilder);
+        serializedVisualBuilder.FindProperty("hideRootRenderer").boolValue = true;
+        serializedVisualBuilder.FindProperty("configureBoxCollider").boolValue = true;
+        serializedVisualBuilder.FindProperty("bodyLength").floatValue = 1f;
+        serializedVisualBuilder.FindProperty("bodyRadius").floatValue = 0.055f;
+        serializedVisualBuilder.FindProperty("tipLength").floatValue = 0.28f;
+        serializedVisualBuilder.FindProperty("finLength").floatValue = 0.32f;
+        serializedVisualBuilder.FindProperty("finHeight").floatValue = 0.16f;
+        serializedVisualBuilder.FindProperty("grabColliderSize").vector3Value = new Vector3(0.45f, 0.45f, 1.35f);
+        serializedVisualBuilder.ApplyModifiedProperties();
+        visualBuilder.Rebuild();
+    }
+
+    private static void ConfigureDartFlight(GameObject throwable)
+    {
+        DartFlightStabilizer flightStabilizer = AddIfMissing<DartFlightStabilizer>(throwable);
+        SerializedObject serializedFlightStabilizer = new SerializedObject(flightStabilizer);
+        serializedFlightStabilizer.FindProperty("minimumSpeed").floatValue = 0.25f;
+        serializedFlightStabilizer.FindProperty("angularDampingStrength").floatValue = 10f;
+        serializedFlightStabilizer.FindProperty("alignDegreesPerSecond").floatValue = 1440f;
+        serializedFlightStabilizer.FindProperty("forceRotationWhileHeld").boolValue = false;
+        serializedFlightStabilizer.FindProperty("heldAlignDegreesPerSecond").floatValue = 360f;
+        serializedFlightStabilizer.FindProperty("alignOnceOnGrab").boolValue = true;
+        serializedFlightStabilizer.FindProperty("snapRotation").boolValue = true;
+        serializedFlightStabilizer.FindProperty("throwVelocityMultiplier").floatValue = 1.35f;
+        serializedFlightStabilizer.FindProperty("maxThrowSpeed").floatValue = 8f;
+        serializedFlightStabilizer.ApplyModifiedProperties();
     }
 
     private static void RemoveDartVisuals(GameObject throwable)

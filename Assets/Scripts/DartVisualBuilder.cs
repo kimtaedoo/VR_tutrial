@@ -9,7 +9,7 @@ public class DartVisualBuilder : MonoBehaviour
     [SerializeField] private float tipLength = 0.22f;
     [SerializeField] private float finLength = 0.26f;
     [SerializeField] private float finHeight = 0.14f;
-    [SerializeField] private Vector3 grabColliderSize = new Vector3(0.55f, 0.55f, 1.1f);
+    [SerializeField] private Vector3 grabColliderSize = new Vector3(0.45f, 0.45f, 1.35f);
     [SerializeField] private Color bodyColor = new Color(0.18f, 0.18f, 0.2f);
     [SerializeField] private Color tipColor = new Color(0.8f, 0.78f, 0.68f);
     [SerializeField] private Color finColor = new Color(0.9f, 0.12f, 0.08f);
