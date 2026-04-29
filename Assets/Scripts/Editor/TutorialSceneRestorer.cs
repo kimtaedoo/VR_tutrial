@@ -238,7 +238,7 @@ public static class TutorialSceneRestorer
         AddIfMissing<GraphicRaycaster>(canvasObject);
 
         RectTransform canvasRect = canvasObject.GetComponent<RectTransform>();
-        canvasRect.position = new Vector3(0f, 1.8f, 2f);
+        canvasRect.position = new Vector3(0f, 2.5f, 3f);
         canvasRect.rotation = Quaternion.identity;
         canvasRect.localScale = Vector3.one * 0.01f;
         canvasRect.sizeDelta = new Vector2(500f, 140f);
@@ -279,7 +279,7 @@ public static class TutorialSceneRestorer
         }
 
         target.transform.SetParent(null, false);
-        target.transform.SetPositionAndRotation(new Vector3(0f, 1.2f, 2.5f), Quaternion.identity);
+        target.transform.SetPositionAndRotation(new Vector3(0f, 1.2f, 4f), Quaternion.identity);
         target.transform.localScale = new Vector3(1.5f, 1.5f, 0.2f);
 
         if (target.TryGetComponent(out BoxCollider boxCollider))
