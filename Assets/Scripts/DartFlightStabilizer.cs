@@ -13,6 +13,7 @@ public class DartFlightStabilizer : MonoBehaviour
     [SerializeField] private bool snapRotation = true;
     [SerializeField] private float throwVelocityMultiplier = 1.35f;
     [SerializeField] private float maxThrowSpeed = 8f;
+    [SerializeField] private ScoreManager scoreManager;
 
     private Rigidbody objectRigidbody;
     private Grabbable grabbable;
@@ -96,6 +97,28 @@ public class DartFlightStabilizer : MonoBehaviour
 
         if (pointerEvent.Type == PointerEventType.Unselect)
         {
+            bool acceptedThrow = true;
+            if (scoreManager == null)
+            {
+                scoreManager = Object.FindAnyObjectByType<ScoreManager>();
+            }
+
+            if (scoreManager != null)
+            {
+                acceptedThrow = scoreManager.RegisterThrow();
+            }
+
+            if (!acceptedThrow)
+            {
+                ResettableObject resettableObject = GetComponent<ResettableObject>();
+                if (resettableObject != null)
+                {
+                    resettableObject.ResetToStart();
+                }
+
+                return;
+            }
+
             pendingThrowBoostFrames = 2;
         }
     }

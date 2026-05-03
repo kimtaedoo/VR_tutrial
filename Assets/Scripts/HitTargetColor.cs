@@ -9,6 +9,8 @@ public class HitTargetColor : MonoBehaviour
     [SerializeField] private AudioClip hitSound;
     [SerializeField] private ScoreManager scoreManager;
     [SerializeField] private int scoreAmount = 1;
+    [SerializeField] private bool useLayeredScore = true;
+    [SerializeField] private float targetRadius = 0.5f;
 
     private Renderer targetRenderer;
     private AudioSource audioSource;
@@ -20,7 +22,10 @@ public class HitTargetColor : MonoBehaviour
     {
         targetRenderer = GetComponent<Renderer>();
         audioSource = GetComponent<AudioSource>();
-        originalColor = targetRenderer.material.color;
+        if (targetRenderer != null)
+        {
+            originalColor = targetRenderer.material.color;
+        }
         originalScale = transform.localScale;
     }
 
@@ -36,22 +41,26 @@ public class HitTargetColor : MonoBehaviour
             return;
         }
 
-        StartCoroutine(ProcessHit(collision.gameObject));
+        int awardedScore = CalculateScore(collision);
+        StartCoroutine(ProcessHit(collision.gameObject, awardedScore));
     }
 
-    private System.Collections.IEnumerator ProcessHit(GameObject hitObject)
+    private System.Collections.IEnumerator ProcessHit(GameObject hitObject, int awardedScore)
     {
         isProcessingHit = true;
-        targetRenderer.material.color = hitColor;
+        if (targetRenderer != null)
+        {
+            targetRenderer.material.color = hitColor;
+        }
 
         if (audioSource != null && hitSound != null)
         {
             audioSource.PlayOneShot(hitSound);
         }
 
-        if (scoreManager != null)
+        if (scoreManager != null && awardedScore > 0)
         {
-            scoreManager.AddScore(scoreAmount);
+            scoreManager.AddScore(awardedScore);
         }
 
         ResettableObject resettableObject = hitObject.GetComponent<ResettableObject>();
@@ -68,9 +77,50 @@ public class HitTargetColor : MonoBehaviour
             yield return new WaitForSeconds(remainingColorDuration);
         }
 
-        targetRenderer.material.color = originalColor;
+        if (targetRenderer != null)
+        {
+            targetRenderer.material.color = originalColor;
+        }
         transform.localScale = originalScale;
         isProcessingHit = false;
+    }
+
+    private int CalculateScore(Collision collision)
+    {
+        if (!useLayeredScore || collision.contactCount == 0 || targetRadius <= 0f)
+        {
+            return scoreAmount;
+        }
+
+        Vector3 localHitPoint = transform.InverseTransformPoint(collision.GetContact(0).point);
+        float normalizedDistance = new Vector2(localHitPoint.x, localHitPoint.y).magnitude / targetRadius;
+
+        if (normalizedDistance > 1f)
+        {
+            return 0;
+        }
+
+        if (normalizedDistance <= 0.2f)
+        {
+            return 10;
+        }
+
+        if (normalizedDistance <= 0.4f)
+        {
+            return 5;
+        }
+
+        if (normalizedDistance <= 0.6f)
+        {
+            return 3;
+        }
+
+        if (normalizedDistance <= 0.8f)
+        {
+            return 2;
+        }
+
+        return 1;
     }
 
     private System.Collections.IEnumerator AnimateHitScale()

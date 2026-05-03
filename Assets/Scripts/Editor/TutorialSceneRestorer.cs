@@ -52,7 +52,7 @@ public static class TutorialSceneRestorer
         }
 
         ConfigureDartVisual(throwable);
-        ConfigureDartFlight(throwable);
+        ConfigureDartFlight(throwable, Object.FindAnyObjectByType<ScoreManager>());
         Selection.activeGameObject = throwable;
         EditorGUIUtility.PingObject(throwable);
         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
@@ -71,10 +71,9 @@ public static class TutorialSceneRestorer
         }
 
         RestoreThrowable(throwable);
+        ScoreManager scoreManager = RestoreScoreManager(throwable.GetComponent<ResettableObject>());
         ConfigureDartVisual(throwable);
-        ConfigureDartFlight(throwable);
-
-        ScoreManager scoreManager = RestoreScoreManager();
+        ConfigureDartFlight(throwable, scoreManager);
         CleanMistakenTeleportTarget();
         GameObject target = RestoreTarget(scoreManager);
 
@@ -123,6 +122,11 @@ public static class TutorialSceneRestorer
         SerializedObject serializedResettable = new SerializedObject(resettableObject);
         serializedResettable.FindProperty("waitInStartPosition").boolValue = true;
         serializedResettable.FindProperty("resetBelowY").floatValue = -0.5f;
+        serializedResettable.FindProperty("useCameraRelativeStartPosition").boolValue = true;
+        serializedResettable.FindProperty("cameraForwardOffset").floatValue = 0.3f;
+        serializedResettable.FindProperty("cameraDownOffset").floatValue = 0.2f;
+        serializedResettable.FindProperty("cameraSideOffset").floatValue = 0.2f;
+        serializedResettable.FindProperty("alignRotationToCameraForward").boolValue = true;
         serializedResettable.ApplyModifiedProperties();
     }
 
@@ -176,7 +180,7 @@ public static class TutorialSceneRestorer
         visualBuilder.Rebuild();
     }
 
-    private static void ConfigureDartFlight(GameObject throwable)
+    private static void ConfigureDartFlight(GameObject throwable, ScoreManager scoreManager)
     {
         DartFlightStabilizer flightStabilizer = AddIfMissing<DartFlightStabilizer>(throwable);
         SerializedObject serializedFlightStabilizer = new SerializedObject(flightStabilizer);
@@ -189,6 +193,7 @@ public static class TutorialSceneRestorer
         serializedFlightStabilizer.FindProperty("snapRotation").boolValue = true;
         serializedFlightStabilizer.FindProperty("throwVelocityMultiplier").floatValue = 1.35f;
         serializedFlightStabilizer.FindProperty("maxThrowSpeed").floatValue = 8f;
+        serializedFlightStabilizer.FindProperty("scoreManager").objectReferenceValue = scoreManager;
         serializedFlightStabilizer.ApplyModifiedProperties();
     }
 
@@ -204,7 +209,7 @@ public static class TutorialSceneRestorer
         }
     }
 
-    private static ScoreManager RestoreScoreManager()
+    private static ScoreManager RestoreScoreManager(ResettableObject throwableResettable = null)
     {
         GameObject scoreObject = GameObject.Find("ScoreManager");
         if (scoreObject == null)
@@ -218,6 +223,10 @@ public static class TutorialSceneRestorer
 
         SerializedObject serializedScoreManager = new SerializedObject(scoreManager);
         serializedScoreManager.FindProperty("scoreText").objectReferenceValue = scoreText;
+        serializedScoreManager.FindProperty("throwsPerPlay").intValue = 10;
+        serializedScoreManager.FindProperty("resultDelay").floatValue = 1.25f;
+        serializedScoreManager.FindProperty("resultDistanceFromPlayer").floatValue = 1.5f;
+        serializedScoreManager.FindProperty("throwableResettable").objectReferenceValue = throwableResettable;
         serializedScoreManager.ApplyModifiedProperties();
 
         return scoreManager;
@@ -280,7 +289,7 @@ public static class TutorialSceneRestorer
 
         target.transform.SetParent(null, false);
         target.transform.SetPositionAndRotation(new Vector3(0f, 1.2f, 4f), Quaternion.identity);
-        target.transform.localScale = new Vector3(1.5f, 1.5f, 0.2f);
+        target.transform.localScale = new Vector3(1.8f, 1.8f, 0.2f);
 
         if (target.TryGetComponent(out BoxCollider boxCollider))
         {
@@ -296,7 +305,17 @@ public static class TutorialSceneRestorer
         serializedHitTarget.FindProperty("hitScaleDuration").floatValue = 0.18f;
         serializedHitTarget.FindProperty("scoreManager").objectReferenceValue = scoreManager;
         serializedHitTarget.FindProperty("scoreAmount").intValue = 1;
+        serializedHitTarget.FindProperty("useLayeredScore").boolValue = true;
+        serializedHitTarget.FindProperty("targetRadius").floatValue = 0.5f;
         serializedHitTarget.ApplyModifiedProperties();
+
+        TargetRingVisualBuilder ringVisualBuilder = AddIfMissing<TargetRingVisualBuilder>(target);
+        SerializedObject serializedRingVisualBuilder = new SerializedObject(ringVisualBuilder);
+        serializedRingVisualBuilder.FindProperty("hideRootRenderer").boolValue = true;
+        serializedRingVisualBuilder.FindProperty("frontOffset").floatValue = -0.52f;
+        serializedRingVisualBuilder.FindProperty("segments").intValue = 96;
+        serializedRingVisualBuilder.ApplyModifiedProperties();
+        ringVisualBuilder.Rebuild();
 
         return target;
     }

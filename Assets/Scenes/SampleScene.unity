@@ -8625,6 +8625,7 @@ GameObject:
   - component: {fileID: 1537335575}
   - component: {fileID: 1537335574}
   - component: {fileID: 1537335573}
+  - component: {fileID: 1537335579}
   m_Layer: 0
   m_Name: DartTarget
   m_TagString: Untagged
@@ -8651,6 +8652,28 @@ MonoBehaviour:
   hitSound: {fileID: 8300000, guid: 7478151cf36724a7dada558f746c3633, type: 3}
   scoreManager: {fileID: 2117043811}
   scoreAmount: 1
+  useLayeredScore: 1
+  targetRadius: 0.5
+--- !u!114 &1537335579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1537335572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e2f5e5b515a40509f4fc7ec027f92b8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TargetRingVisualBuilder
+  hideRootRenderer: 1
+  frontOffset: -0.52
+  segments: 96
+  outerColor: {r: 0, g: 0, b: 0, a: 1}
+  outerMiddleColor: {r: 1, g: 1, b: 1, a: 1}
+  middleColor: {r: 0, g: 0, b: 1, a: 1}
+  innerMiddleColor: {r: 1, g: 1, b: 1, a: 1}
+  centerColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!82 &1537335574
 AudioSource:
   m_ObjectHideFlags: 0
@@ -8836,7 +8859,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.2, z: 4}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 0.2}
+  m_LocalScale: {x: 1.8, y: 1.8, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -9502,6 +9525,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ResettableObject
   resetBelowY: 0.08
   waitInStartPosition: 1
+  useCameraRelativeStartPosition: 1
+  cameraForwardOffset: 0.3
+  cameraDownOffset: 0.2
+  cameraSideOffset: 0.2
+  alignRotationToCameraForward: 1
 --- !u!114 &1596182272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9546,6 +9574,7 @@ MonoBehaviour:
   snapRotation: 1
   throwVelocityMultiplier: 1.35
   maxThrowSpeed: 8
+  scoreManager: {fileID: 2117043811}
 --- !u!1 &1597138590
 GameObject:
   m_ObjectHideFlags: 0
@@ -11865,6 +11894,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreManager
   scoreText: {fileID: 1198023313}
+  throwsPerPlay: 10
+  resultDelay: 1.25
+  resultDistanceFromPlayer: 1.5
+  throwableResettable: {fileID: 1596182271}
 --- !u!4 &2117043812
 Transform:
   m_ObjectHideFlags: 0
