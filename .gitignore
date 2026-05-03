@@ -40,6 +40,12 @@
 # Unity package manager generated files
 /Assets/AssetStoreTools*
 
+# Unity Android / IL2CPP generated build outputs
+/.utmp/
+/VR_tutrial_BurstDebugInformation_DoNotShip/
+/*_BackUpThisFolder_ButDontShipItWithYourGame/
+/TempAssembly.dll
+
 # OS generated files
 .DS_Store
 Thumbs.db
